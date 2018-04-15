@@ -7,43 +7,53 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
 @SpringBootApplication
 public class TestApplication {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     SpringApplication.run(TestApplication.class, args);
+
+//    CompletableFuture.supplyAsync(() -> {
+//      System.err.println("Executing task");
+//      try {
+//        Thread.sleep(5000);
+//      } catch (InterruptedException e) {
+//        e.printStackTrace();
+//      }
+//      return "Some result";
+//    }).whenComplete((result, ex) -> System.err.println("Handling task - " + result)).join();
+
+
+    FilePathReaderSimple filePathReaderSimple = new FilePathReaderSimple();
+    filePathReaderSimple.read();
 
     //hashingExample();
     //bloomFilterExample();
 //    completableFutureExample();
 //    readFileExample();
 
-    FilePathReader filePathReader = new FilePathReader();
-    CompletableFuture.supplyAsync(() -> filePathReader.getPathes(FilePathReader.BASE_PATH))
-        .thenAccept(() -> )
+//    FilePathReader filePathReader = new FilePathReader();
+//    CompletableFuture.supplyAsync(() -> filePathReader.getPathes(FilePathReader.BASE_PATH));
   }
 
   private static void readFileExample() {
-    try (FileChannel channel =
-             (FileChannel) Files.newByteChannel(Paths.get("file.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
+    try (FileChannel channel = (FileChannel) Files
+        .newByteChannel(Paths.get("file.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
       ByteBuffer buffer = ByteBuffer.allocate(64);
 
-      IntStream.range(0, buffer.capacity()).forEach(i -> buffer.put((byte)('A' + i)));
+      IntStream.range(0, buffer.capacity()).forEach(i -> buffer.put((byte) ('A' + i)));
       buffer.rewind();
       channel.write(buffer);
 

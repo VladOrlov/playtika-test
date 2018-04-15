@@ -1,7 +1,6 @@
 package com.playtika.test;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,19 +14,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static java.lang.Runtime.*;
 import static java.nio.file.Files.isDirectory;
 
 public class FilePathReader {
 
   public static Set<String> pathes = new ConcurrentSkipListSet<>();
 
-  public static final String BASE_PATH = "/home/vorlov/Programs";
+  public static final String BASE_PATH = "/home/vorlov/test";
 
   public List<String> getPathes(String basePath) {
 
     ExecutorService executorService = Executors.newCachedThreadPool();
-    executorService.isShutdown()
     try {
       List<Path> paths = Files.list(Paths.get(BASE_PATH)).collect(Collectors.toList());
 
@@ -37,12 +34,17 @@ public class FilePathReader {
 
       CompletableFuture.runAsync(() -> addFilePathesToPool(paths));
 
-      directoryPathes.stream()
+      List<CompletableFuture<List<String>>> collect = directoryPathes.stream()
           .map(path -> CompletableFuture.supplyAsync(() ->
               this.getPathes(path.toAbsolutePath().toString())))
-          .collect(Collectors.toList())
+          .collect(Collectors.toList());
 
     } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
     return Lists.newArrayList();
