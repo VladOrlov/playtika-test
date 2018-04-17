@@ -25,32 +25,14 @@ public class TestApplication {
   public static void main(String[] args) throws IOException {
     SpringApplication.run(TestApplication.class, args);
 
-//    CompletableFuture.supplyAsync(() -> {
-//      System.err.println("Executing task");
-//      try {
-//        Thread.sleep(5000);
-//      } catch (InterruptedException e) {
-//        e.printStackTrace();
-//      }
-//      return "Some result";
-//    }).whenComplete((result, ex) -> System.err.println("Handling task - " + result)).join();
-
-
-    FilePathReaderSimple filePathReaderSimple = new FilePathReaderSimple();
+    FilePathReaderImperative filePathReaderSimple = new FilePathReaderImperative();
     filePathReaderSimple.read();
 
-    //hashingExample();
-    //bloomFilterExample();
-//    completableFutureExample();
-//    readFileExample();
-
-//    FilePathReader filePathReader = new FilePathReader();
-//    CompletableFuture.supplyAsync(() -> filePathReader.getPathes(FilePathReader.BASE_PATH));
   }
 
   private static void readFileExample() {
-    try (FileChannel channel = (FileChannel) Files
-        .newByteChannel(Paths.get("file.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
+    try (FileChannel channel = (FileChannel) Files.newByteChannel(
+        Paths.get("file.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
       ByteBuffer buffer = ByteBuffer.allocate(64);
 
       IntStream.range(0, buffer.capacity()).forEach(i -> buffer.put((byte) ('A' + i)));
@@ -60,16 +42,6 @@ public class TestApplication {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  private static void completableFutureExample() {
-    EventProducer eventProducer = EventProducer.create();
-    EventHandler eventHandler = EventHandler.create();
-    CompletableFuture<Event> eventConsuming = CompletableFuture.supplyAsync(eventProducer::createEvent).thenApply(eventHandler::processEvent);
-
-    eventConsuming.whenComplete((result, exception) -> {
-    });
-    eventConsuming.join();
   }
 
   private static void hashingExample() {

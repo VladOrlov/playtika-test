@@ -1,0 +1,2 @@
+app:
+  scanPath: ${SCAN_PATH:/home/vorlov/test}
